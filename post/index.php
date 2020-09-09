@@ -18,10 +18,11 @@ if (isset($_SESSION['id']) && $_SESSION['time'] + 3600 > time()) {
 //投稿を記録する
 if (!empty($_POST)) {
     if ($_POST['message'] != '') {
-        $message = $db->prepare('INSERT INTO posts SET member_id=?, message=?,created=NOW()');
+        $message = $db->prepare('INSERT INTO posts SET member_id=?, message=?, reply_post_id=?, created=NOW()');
         $message->execute(array(
             $member['id'],
             $_POST['message'],
+            $_POST['reply_post_id'],
         ));
 
         header('Location: index.php');
@@ -58,6 +59,22 @@ if (isset($_REQUEST['res'])) {
     $message = '@' . $table['name'] .' '. $table['message'];
 }
 
+//いいねの処理
+if (isset($_GET['post_id']) && isset($_SESSION['id']) && isset($_GET['action'])) {
+    if (($_GET['action']) == 'like') {
+        $insert = $db->prepare('INSERT INTO likes SET post_id=?, member_id=?, created_at=NOW()');
+        $insert->execute(array(
+            $_GET['post_id'],
+            $_SESSION['id']
+        ));
+    } else {
+        $update = $db->prepare('UPDATE likes SET deleted=true WHERE post_id=? AND member_id=?');
+        $update->execute(array(
+            $_GET['post_id'],
+            $_SESSION['id']
+        ));
+    }
+}
 
 //htmlspecialcharsのショートカット
 function h($value){
@@ -108,10 +125,13 @@ function makeLink($value){
         <?php
         foreach($posts as $post):
             //いいねのカウント
-
-            //リツイートのカウント
-
-
+            $like_count= $db->prepare('SELECT COUNT(*) AS cnt FROM likes WHERE post_id=? AND member_id=? AND deleted=false');
+            $like_count->execute(array(
+                $post['id'],
+                $_SESSION['id']
+            ));
+            $like_cnt = $like_count->fetch();
+            $like_cnt['cnt'];
             ?>
             <div class="msg">
                 <img src="member_picture/<?php echo h($post['picture']);?>"
@@ -122,6 +142,14 @@ function makeLink($value){
                   (<?php echo h($post['name']);?>)
               </span>
                     [<a href="index.php?res=<?php echo h($post['id']);?>">Re</a>]
+
+                    <?php if(($_SESSION['id']) != ($post['member_id'])):?>
+                        <?php if ($like_cnt['cnt'] > 0):?>
+                            [<a href="index.php?post_id=<?php echo h($post['id']);?>&action=dislike">Dislike</a>]
+                        <?php else:?>
+                            [<a href="index.php?post_id=<?php echo h($post['id']);?>&action=like">Like</a>]
+                        <?php endif;?>
+                    <?php endif;?>
 
 
                 </p>
