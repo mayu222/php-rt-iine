@@ -38,7 +38,7 @@ if (!empty($_POST)) {
     }
 }
 //投稿を取得する
-$page = $_REQUEST['page'];
+$page = isset($_REQUEST['page'])?$_REQUEST['page']:'';
 if ($page == '') {
     $page = 1;
 }
@@ -130,10 +130,10 @@ function makeLink($value)
                     <dt><?php echo h($member['name']); ?>さん、メッセージをどうぞ</dt>
                     <dd>
                         <label>
-                            <textarea name="message" cols="50" rows="5"><?php echo h($message); ?></textarea>
+                            <textarea name="message" cols="50" rows="5"><?php echo h(isset($message)?($message):''); ?></textarea>
                         </label>
-                        <input type="hidden" name="reply_post_id" value="<?php echo h($_REQUEST['res']) ?>" />
-                        <input type="hidden" name="retweet_post_id" value="<?php echo h($_REQUEST['retweet']) ?>" />
+                        <input type="hidden" name="reply_post_id" value="<?php echo h(isset($_REQUEST['res'])?$_REQUEST['res']:''); ?>" />
+                        <input type="hidden" name="retweet_post_id" value="<?php echo h(isset($_REQUEST['retweet'])?($_REQUEST['retweet']):''); ?>" />
                     </dd>
                 </dl>
                 <div>
