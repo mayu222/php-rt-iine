@@ -10,7 +10,7 @@ if (empty($_REQUEST['id'])) {
 //投稿を取得する
 $posts = $db->prepare('SELECT m.name, m.picture, p.* FROM members m, posts p WHERE m.id=p.member_id AND p.id=?
 ORDER BY p.created DESC');
-$posts->execute(array($_REQUEST['id']));
+$posts->execute([$_REQUEST['id']]);
 ?>
 
 <!DOCTYPE html>

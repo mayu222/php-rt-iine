@@ -13,10 +13,10 @@ if (!empty($_POST)) {
     //ログインの処理
     if ($_POST['email'] != '' && $_POST['password'] != '') {
         $login = $db->prepare('SELECT * FROM members WHERE email=? AND password=?');
-        $login->execute(array(
+        $login->execute([
             $_POST['email'],
             sha1($_POST['password'])
-        ));
+        ]);
         $member = $login->fetch();
 
         if ($member) {
@@ -33,7 +33,7 @@ if (!empty($_POST)) {
             header('Location: index.php');
             exit();
         } else {
-            $error['login'] == 'failed';
+            $error['login'] = 'failed';
         }
     } else {
         $error['login'] = 'blank';

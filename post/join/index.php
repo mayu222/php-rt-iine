@@ -27,7 +27,7 @@ if(!empty($_POST)){
         //重複アカウントチェック
     if (empty($error)) {
         $member = $db->prepare('SELECT COUNT(*) AS cnt FROM members WHERE email=?');
-        $member->execute(array($_POST['email']));
+        $member->execute($_POST['email']);
         $record = $member->fetch();
         if ($record['cnt'] > 0) {
             $error['email'] = 'duplicate';

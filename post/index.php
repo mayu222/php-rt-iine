@@ -7,7 +7,7 @@ if (isset($_SESSION['id']) && ($_SESSION['time'] + 3600) > time()) {
     $_SESSION['time'] = time();
 
     $members = $db->prepare('SELECT * FROM members WHERE id=?');
-    $members->execute(array($_SESSION['id']));
+    $members->execute($_SESSION['id']);
     $member = $members->fetch();
 } else {
     //ログインしていない
@@ -19,18 +19,18 @@ if (isset($_SESSION['id']) && ($_SESSION['time'] + 3600) > time()) {
 if (!empty($_POST)) {
     if ($_POST['message'] != '') {
         $message = $db->prepare('INSERT INTO posts SET member_id=?, message=?, reply_post_id=?, retweet_post_id=?,created=NOW()');
-        $message->execute(array(
+        $message->execute([
             $member['id'],
             $_POST['message'],
             $_POST['reply_post_id'],
             $_POST['retweet_post_id']
-        ));
+        ]);
         if ($_POST['retweet_post_id'] > 0) {
             $retweet = $db->prepare('INSERT INTO retweets SET member_id=?, post_id=?, created_at=NOW()');
-            $retweet->execute(array(
+            $retweet->execute([
                 $member['id'],
                 $_POST['retweet_post_id']
-            ));
+            ]);
         }
 
         header('Location: index.php');
@@ -61,7 +61,7 @@ $posts->execute();
 if (isset($_REQUEST['res'])) {
     $response = $db->prepare('SELECT m.name, m.picture, p.* FROM members m, posts p 
         WHERE m.id=p.member_id AND p.id=? ORDER BY p.created DESC');
-    $response->execute(array($_REQUEST['res']));
+    $response->execute([$_REQUEST['res']]);
 
     $table = $response->fetch();
     $message = '@' . $table['name'] . ' ' . $table['message'];
@@ -71,25 +71,25 @@ if (isset($_REQUEST['res'])) {
 if (isset($_GET['post_id']) && isset($_SESSION['id']) && isset($_GET['action'])) {
     if (($_GET['action']) == 'like') {
         $insert = $db->prepare('INSERT INTO likes SET post_id=?, member_id=?, created_at=NOW()');
-        $insert->execute(array(
+        $insert->execute([
             $_GET['post_id'],
             $_SESSION['id']
-        ));
+        ]);
     } else {
         $update = $db->prepare('UPDATE likes SET deleted=true WHERE post_id=? AND member_id=?');
-        $update->execute(array(
+        $update->execute([
             $_GET['post_id'],
             $_SESSION['id']
-        ));
+        ]);
     }
 }
 
 //リツイートの処理
 if (isset($_GET['retweet'])) {
     $retweet = $db->prepare('SELECT m.name, p. * FROM members m, posts p WHERE m.id=p.member_id AND p.id=?');
-    $retweet->execute(array(
+    $retweet->execute([
         $_GET['retweet']
-    ));
+    ]);
     $table = $retweet->fetch();
     $message = $table['name'] . 'さんの投稿をリツイート' . "\n" . $table['message'];
 }
@@ -147,25 +147,25 @@ function makeLink($value)
             foreach ($posts as $post) :
                 //いいねのカウント
                 $like_count = $db->prepare('SELECT COUNT(*) AS cnt FROM likes WHERE post_id=? AND member_id=? AND deleted=false');
-                $like_count->execute(array(
+                $like_count->execute([
                     $post['id'],
                     $_SESSION['id']
-                ));
+                ]);
                 $like_cnt = $like_count->fetch();
 
                 //リツイートカウント
                 $retweet_count = $db->prepare('SELECT COUNT(*) AS cnt FROM posts WHERE retweet_post_id=?');
-                $retweet_count->execute(array(
+                $retweet_count->execute([
                     $post['id']
-                ));
+                ]);
                 $retweet_cnt = $retweet_count->fetch();
 
                 //リツイートされているか
                 $is_retweet = $db->prepare('SELECT COUNT(*) AS cnt FROM retweets WHERE member_id=? AND post_id=?');
-                $is_retweet->execute(array(
+                $is_retweet->execute([
                     $member['id'],
                     $post['id']
-                ));
+                ]);
                 $is_retweet_cnt = $is_retweet->fetch();
             ?>
                 <div class="msg">
