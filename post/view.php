@@ -1,6 +1,7 @@
 <?php
 session_start();
 require('../dbconnect.php');
+require ('../functions.php');
 
 if (empty($_REQUEST['id'])) {
     header('Location: index.php');
@@ -35,16 +36,16 @@ $posts->execute([$_REQUEST['id']]);
         if ($post = $posts->fetch()):
             ?>
             <div class="msg">
-                <img src="member_picture/<?php echo htmlspecialchars($post['picture'],ENT_QUOTES);?>"
-                     width="48" height="48" alt="<?php echo htmlspecialchars($post['name'], ENT_QUOTES);?>" />
+                <img src="member_picture/<?php echo h($post['picture']);?>"
+                     width="48" height="48" alt="<?php echo h($post['name']);?>" />
                 <p>
-                    <?php echo htmlspecialchars($post['message'],ENT_QUOTES);?>
+                    <?php echo h($post['message']);?>
                     <span class="name">
-                  (<?php echo htmlspecialchars($post['name'],ENT_QUOTES);?>)
+                  (<?php echo h($post['name']);?>)
               </span>
                 </p>
                 <p class="day">
-                    <?php echo htmlspecialchars($post['created'],ENT_QUOTES);?>
+                    <?php echo h($post['created']);?>
                 </p>
             </div>
         <?php
@@ -55,10 +56,6 @@ $posts->execute([$_REQUEST['id']]);
         endif;
         ?>
     </div>
-
-
-
-
 </div>
 </body>
 </html>

@@ -1,5 +1,6 @@
 <?php
 require ('../dbconnect.php');
+require ('../functions.php');
 
 session_start();
 
@@ -66,7 +67,7 @@ if (!empty($_POST)) {
             <dl>
                 <dt>メールアドレス</dt>
                 <dd>
-                    <input type="text" name="email" size="35" maxlength="255" value="<?php echo htmlspecialchars(isset($_POST['email'])?$_POST['email']:'',ENT_QUOTES);?>" />
+                    <input type="text" name="email" size="35" maxlength="255" value="<?php echo h(isset($_POST['email'])?$_POST['email']:'');?>" />
                     <?php if (isset($error['login']) && $error['login'] == 'blank'):?>
                         <p class="error">* メールアドレスとパスワードをご記入ください</p>
                     <?php endif;?>
@@ -76,7 +77,7 @@ if (!empty($_POST)) {
                 </dd>
                 <dt>パスワード</dt>
                 <dd>
-                    <input type="text" name="password" size="35" maxlength="255" value="<?php echo htmlspecialchars(isset($_POST['password'])?$_POST['password']:'',ENT_QUOTES);?>" />
+                    <input type="text" name="password" size="35" maxlength="255" value="<?php echo h(isset($_POST['password'])?$_POST['password']:'');?>" />
                 </dd>
                 <dt>ログイン情報の記録</dt>
                 <dd>
@@ -86,9 +87,7 @@ if (!empty($_POST)) {
             </dl>
             <div><input type="submit" value="ログインする"></div>
         </form>
-
     </div>
-
 </div>
 </body>
 </html>

@@ -1,6 +1,7 @@
 <?php
 session_start();
 require ('../../dbconnect.php');
+require ('../../functions.php');
 
 if(!isset($_SESSION['join'])) {
     header('Location: index.php');
@@ -44,14 +45,14 @@ if (!empty($_POST)) {
             <input type="hidden" name="action" value="submit" />
             <dl>
                 <dt>ニックネーム</dt>
-                <dd><?php echo htmlspecialchars($_SESSION['join']['name'], ENT_QUOTES);?></dd>
+                <dd><?php echo h($_SESSION['join']['name']);?></dd>
                 <dt>メールアドレス</dt>
-                <dd><?php echo htmlspecialchars($_SESSION['join']['email'], ENT_QUOTES);?></dd>
+                <dd><?php echo h($_SESSION['join']['email']);?></dd>
                 <dt>パスワード</dt>
                 <dd>【表示されません】</dd>
                 <dt>写真など</dt>
                 <dd>
-                    <img src="../member_picture/<?php echo htmlspecialchars($_SESSION['join']['image'], ENT_QUOTES);?>"
+                    <img src="../member_picture/<?php echo h($_SESSION['join']['image']);?>"
                     width="100" height="100" alt="" />
                 </dd>
             </dl>

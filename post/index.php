@@ -1,13 +1,14 @@
 <?php
 session_start();
 require('../dbconnect.php');
+require ('../functions.php');
 
 if (isset($_SESSION['id']) && ($_SESSION['time'] + 3600) > time()) {
     //ログインしている
     $_SESSION['time'] = time();
 
     $members = $db->prepare('SELECT * FROM members WHERE id=?');
-    $members->execute($_SESSION['id']);
+    $members->execute([$_SESSION['id']]);
     $member = $members->fetch();
 } else {
     //ログインしていない
@@ -93,17 +94,6 @@ if (isset($_GET['retweet'])) {
     $table = $retweet->fetch();
     $message = $table['name'] . 'さんの投稿をリツイート' . "\n" . $table['message'];
 }
-
-//htmlspecialcharsのショートカット
-function h($value)
-{
-    return htmlspecialchars($value, ENT_QUOTES);
-}
-//本文内のURLにリンクを設定します
-function makeLink($value)
-{
-    return mb_ereg_replace("(https?)(://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)", '<a href="\1\2">\1\2</a>', $value);
-}
 ?>
 
 <!DOCTYPE html>
@@ -122,7 +112,6 @@ function makeLink($value)
         <div id="head">
             <h1>ひとこと掲示板</h1>
         </div>
-
         <div id="content">
             <div style="text-align: right"><a href="logout.php">ログアウト</a></div>
             <form action="" method="post">
