@@ -67,7 +67,7 @@ if (!empty($_POST)) {
             <dl>
                 <dt>メールアドレス</dt>
                 <dd>
-                    <input type="text" name="email" size="35" maxlength="255" value="<?php echo h(isset($_POST['email'])?$_POST['email']:'');?>" />
+                    <input type="text" name="email" size="35" maxlength="255" value="<?php echo h($_POST['email'] ?? '');?>" />
                     <?php if (isset($error['login']) && $error['login'] == 'blank'):?>
                         <p class="error">* メールアドレスとパスワードをご記入ください</p>
                     <?php endif;?>
@@ -77,9 +77,9 @@ if (!empty($_POST)) {
                 </dd>
                 <dt>パスワード</dt>
                 <dd>
-                    <input type="text" name="password" size="35" maxlength="255" value="<?php echo h(isset($_POST['password'])?$_POST['password']:'');?>" />
+                    <input type="text" name="password" size="35" maxlength="255" value="<?php echo h($_POST['password'] ?? '');?>" />
                 </dd>
-                <dt>ログイン情報の記録</dt>
+                <dt>ログイン情報の記録</dt
                 <dd>
                     <input id="save" type="checkbox" name="save" value="on">
                     <label for="save">次回からは自動的にログイン</label>

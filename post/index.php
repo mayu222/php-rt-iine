@@ -1,6 +1,6 @@
 <?php
 session_start();
-require('../dbconnect.php');
+require_once('../dbconnect.php');
 require ('../functions.php');
 
 if (isset($_SESSION['id']) && ($_SESSION['time'] + 3600) > time()) {
@@ -38,8 +38,9 @@ if (!empty($_POST)) {
         exit();
     }
 }
+//$db = 10;
 //投稿を取得する
-$page = isset($_REQUEST['page'])?$_REQUEST['page']:'';
+$page = $_REQUEST['page'] ?? '';
 if ($page == '') {
     $page = 1;
 }
@@ -118,11 +119,9 @@ if (isset($_GET['retweet'])) {
                 <dl>
                     <dt><?php echo h($member['name']); ?>さん、メッセージをどうぞ</dt>
                     <dd>
-                        <label>
-                            <textarea name="message" cols="50" rows="5"><?php echo h(isset($message)?($message):''); ?></textarea>
-                        </label>
-                        <input type="hidden" name="reply_post_id" value="<?php echo h(isset($_REQUEST['res'])?$_REQUEST['res']:''); ?>" />
-                        <input type="hidden" name="retweet_post_id" value="<?php echo h(isset($_REQUEST['retweet'])?($_REQUEST['retweet']):''); ?>" />
+                        <textarea name="message" cols="50" rows="5"><?php echo h($message ?? '');?></textarea>
+                        <input type="hidden" name="reply_post_id" value="<?php echo h($_REQUEST['res'] ?? ''); ?>" />
+                        <input type="hidden" name="retweet_post_id" value="<?php echo h($_REQUEST['retweet'] ?? ''); ?>" />
                     </dd>
                 </dl>
                 <div>
@@ -131,7 +130,6 @@ if (isset($_GET['retweet'])) {
                     </p>
                 </div>
             </form>
-
             <?php
             foreach ($posts as $post) :
                 //いいねのカウント
@@ -202,7 +200,6 @@ if (isset($_GET['retweet'])) {
                     <?php if ($retweet_cnt['cnt'] > 0) : ?>
                         <p><?php echo $retweet_cnt['cnt']; ?>件のリツイート</p>
                     <?php endif; ?>
-
                 </div>
             <?php endforeach; ?>
 
