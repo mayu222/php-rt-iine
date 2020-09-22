@@ -191,28 +191,16 @@ if (isset($_GET['retweet'])) {
             <?php endforeach; ?>
 
             <ul class="paging">
-                <?php
-                if ($page > 1) {
-                ?>
+                <?php if ($page > 1):?>
                     <li><a href="index.php?page=<?php print($page - 1); ?>">前のページへ</a></li>
-                <?php
-                } else {
-                ?>
+                <?php else:?>
                     <li>前のページへ</li>
-                <?php
-                }
-                ?>
-                <?php
-                if ($page < $maxPage) {
-                ?>
+                <?php endif; ?>
+                <?php if ($page < $maxPage) :?>
                     <li><a href="index.php?page=<?php print($page + 1); ?>">次のページへ</a></li>
-                <?php
-                } else {
-                ?>
+                <?php else:?>
                     <li>次のページへ</li>
-                <?php
-                }
-                ?>
+                <?php endif; ?>
             </ul>
 
         </div>
