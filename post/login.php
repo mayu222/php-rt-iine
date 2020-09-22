@@ -1,6 +1,6 @@
 <?php
-require ('../dbconnect.php');
-require ('../functions.php');
+require_once('../dbconnect.php');
+require_once('../functions.php');
 
 session_start();
 

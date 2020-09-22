@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once('../dbconnect.php');
-require ('../functions.php');
+require_once('../functions.php');
 
 if (isset($_SESSION['id']) && ($_SESSION['time'] + 3600) > time()) {
     //ログインしている
@@ -33,7 +33,6 @@ if (!empty($_POST)) {
                 $_POST['retweet_post_id']
             ]);
         }
-
         header('Location: index.php');
         exit();
     }
@@ -95,6 +94,8 @@ if (isset($_GET['retweet'])) {
     $table = $retweet->fetch();
     $message = $table['name'] . 'さんの投稿をリツイート' . "\n" . $table['message'];
 }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -132,29 +133,16 @@ if (isset($_GET['retweet'])) {
             </form>
             <?php
             foreach ($posts as $post) :
-                //いいねのカウント
-                $like_count = $db->prepare('SELECT COUNT(*) AS cnt FROM likes WHERE post_id=? AND member_id=? AND deleted=false');
-                $like_count->execute([
-                    $post['id'],
-                    $_SESSION['id']
-                ]);
-                $like_cnt = $like_count->fetch();
+                //いいねのカウントの呼び出し
+                $like_cnt = select_like_cnt($db, $post['id'], $_SESSION['id']);
 
-                //リツイートカウント
-                $retweet_count = $db->prepare('SELECT COUNT(*) AS cnt FROM posts WHERE retweet_post_id=?');
-                $retweet_count->execute([
-                    $post['id']
-                ]);
-                $retweet_cnt = $retweet_count->fetch();
+                //リツイートカウントの呼び出し
+                $retweet_cnt = select_retweet_cnt($db, $post['id']);
 
-                //リツイートされているか
-                $is_retweet = $db->prepare('SELECT COUNT(*) AS cnt FROM retweets WHERE member_id=? AND post_id=?');
-                $is_retweet->execute([
-                    $member['id'],
-                    $post['id']
-                ]);
-                $is_retweet_cnt = $is_retweet->fetch();
+                //リツイートされているかの呼び出し
+                $is_retweet_cnt = select_is_retweet($db, $member_id['id'], $post_id['id'])
             ?>
+
                 <div class="msg">
                     <img src="member_picture/<?php echo h($post['picture']); ?>" width="48" height="48" alt="<?php echo h($post['name']); ?>" />
                     <p>
@@ -163,7 +151,6 @@ if (isset($_GET['retweet'])) {
                             (<?php echo h($post['name']); ?>)
                         </span>
                         [<a href="index.php?res=<?php echo h($post['id']); ?>">Re</a>]
-
                         <?php if (($_SESSION['id']) != ($post['member_id'])) : ?>
                             <!--いいね-->
                             <?php if ($like_cnt['cnt'] > 0) : ?>

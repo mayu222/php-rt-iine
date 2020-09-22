@@ -1,7 +1,7 @@
 <?php
 session_start();
-require('../dbconnect.php');
-require ('../functions.php');
+require_once('../dbconnect.php');
+require_once ('../functions.php');
 
 if (empty($_REQUEST['id'])) {
     header('Location: index.php');
