@@ -4,7 +4,7 @@ require_once('../functions.php');
 
 session_start();
 
-if (isset($_COOKIE['email']) && $_COOKIE['email'] != ''){
+if (!empty($_COOKIE['email'])){
     $_POST['email'] = $_COOKIE['email'];
     $_POST['password'] = $_COOKIE['password'];
     $_POST['save'] = 'on';
