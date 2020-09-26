@@ -144,7 +144,7 @@ foreach ($posts as $post) {
                 <div class="msg">
                     <img src="member_picture/<?php echo h($post['picture']); ?>" width="48" height="48" alt="<?php echo h($post['name']); ?>" />
                     <p>
-                        <?php echo nl2br(makeLink(h($post['message']))); ?>
+                        <?php echo nl2br(make_link(h($post['message']))); ?>
                         <span class="name">
                             (<?php echo h($post['name']); ?>)
                         </span>
