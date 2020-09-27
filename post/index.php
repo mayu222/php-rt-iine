@@ -16,25 +16,23 @@ if (isset($_SESSION['id']) && ($_SESSION['time'] + 3600) > time()) {
     exit();
 }
 //投稿を記録する
-if (!empty($_POST)) {
-    if (!empty($_POST['message'])) {
-        $message = $db->prepare('INSERT INTO posts SET member_id=?, message=?, reply_post_id=?, retweet_post_id=?,created=NOW()');
-        $message->execute([
+if (!empty($_POST) && !empty($_POST['message'])) {
+    $message = $db->prepare('INSERT INTO posts SET member_id=?, message=?, reply_post_id=?, retweet_post_id=?,created=NOW()');
+    $message->execute([
+        $member['id'],
+        $_POST['message'],
+        $_POST['reply_post_id'],
+        $_POST['retweet_post_id']
+    ]);
+    if ($_POST['retweet_post_id'] > 0) {
+        $retweet = $db->prepare('INSERT INTO retweets SET member_id=?, post_id=?, created_at=NOW()');
+        $retweet->execute([
             $member['id'],
-            $_POST['message'],
-            $_POST['reply_post_id'],
             $_POST['retweet_post_id']
         ]);
-        if ($_POST['retweet_post_id'] > 0) {
-            $retweet = $db->prepare('INSERT INTO retweets SET member_id=?, post_id=?, created_at=NOW()');
-            $retweet->execute([
-                $member['id'],
-                $_POST['retweet_post_id']
-            ]);
-        }
-        header('Location: index.php');
-        exit();
     }
+    header('Location: index.php');
+    exit();
 }
 //投稿を取得する
 $page = $_REQUEST['page'] ?? '';
@@ -130,8 +128,8 @@ foreach ($posts as $post) {
                     <dt><?php echo h($member['name']); ?>さん、メッセージをどうぞ</dt>
                     <dd>
                         <textarea name="message" cols="50" rows="5"><?php echo h($message ?? '');?></textarea>
-                        <input type="hidden" name="reply_post_id" value="<?php echo h($_REQUEST['res'] ?? ''); ?>" />
-                        <input type="hidden" name="retweet_post_id" value="<?php echo h($_REQUEST['retweet'] ?? ''); ?>" />
+                        <input type="hidden" name="reply_post_id" value="<?php echo h($_REQUEST['res'] ?? 0); ?>" />
+                        <input type="hidden" name="retweet_post_id" value="<?php echo h($_REQUEST['retweet'] ?? 0); ?>" />
                     </dd>
                 </dl>
                 <div>
