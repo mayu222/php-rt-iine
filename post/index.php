@@ -17,20 +17,31 @@ if (isset($_SESSION['id']) && ($_SESSION['time'] + 3600) > time()) {
 }
 //投稿を記録する
 if (!empty($_POST) && !empty($_POST['message'])) {
-    $message = $db->prepare('INSERT INTO posts SET member_id=?, message=?, reply_post_id=?, retweet_post_id=?,created=NOW()');
-    $message->execute([
-        $member['id'],
-        $_POST['message'],
-        $_POST['reply_post_id'],
-        $_POST['retweet_post_id']
-    ]);
-    if ($_POST['retweet_post_id'] > 0) {
-        $retweet = $db->prepare('INSERT INTO retweets SET member_id=?, post_id=?, created_at=NOW()');
-        $retweet->execute([
+    try {
+        $db->beginTransaction();
+
+        $message = $db->prepare('INSERT INTO posts SET member_id=?, message=?, reply_post_id=?, retweet_post_id=?,created=NOW()');
+        $message->execute([
             $member['id'],
+            $_POST['message'],
+            $_POST['reply_post_id'],
             $_POST['retweet_post_id']
         ]);
+        if ($_POST['retweet_post_id'] > 0) {
+            $retweet = $db->prepare('INSERT INTO retweets SET member_id=?, post_id=?, created_at=NOW()');
+            $retweet->execute([
+                $member['id'],
+                $_POST['retweet_post_id']
+            ]);
+        }
+
+        $db->commit();
+
+    } catch (PDOException $e) {
+        $db->rollBack();
+        echo $e->getMessage();
     }
+
     header('Location: index.php');
     exit();
 }
